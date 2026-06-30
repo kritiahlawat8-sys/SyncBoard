@@ -5,6 +5,12 @@ export default function Canvas() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentColor, setCurrentColor] = useState('#000000');
   const [currentStroke, setCurrentStroke] = useState(2);
+  const [startX, setStartX] = useState (0);
+  const [startY, setStartY] = useState(0);
+  const [canvasSnapshot, setCanvasSnapshot] = useState(null);
+  const [currentTool, setCurrentTool] = useState('pen')
+  
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -21,9 +27,19 @@ export default function Canvas() {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const ctx = canvas.getContext('2d');
-    ctx.beginPath();
-    ctx.moveTo(x, y);
+
+    //save canvas snapshot for line/rectangle preview
+    if (currentTool === 'line' || currentTool === 'rectangle') {
+      const ctx = canvas.getContext ('2d');
+    setCanvasSnapshot(ctx.getImageData(0,0, canvas.width, canvas.height));
+}
+    setStartX(x);
+    setStartY(y);
+    if (currentTool === 'pen') {
+      const ctx = canvas.getContext('2d');
+      ctx.beginPath();
+      ctx.moveTo(x,y);
+    }
   };
 
   const handleMouseMove = (e) => {
@@ -37,24 +53,93 @@ export default function Canvas() {
     ctx.lineWidth = currentStroke;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  };
 
-  const handleMouseUp = () => {
-    setIsDrawing(false);
-  };
+if (currentTool === 'pen') {
+  ctx.lineTo (x,y);
+  ctx.stroke();
+}
+else if (currentTool === 'line') {
+  // restore canvas and draw preview line
+ctx.putImageData(canvasSnapshot,0,0);
+ctx.beginPath();
+ctx.moveTo(startX, startY);
+ctx.lineTo(x,y);
+ctx.stroke();
+} else if (currentTool === 'rectangle') {
+  // restore canvas and draw preview rectangle
+  ctx.putImageData(canvasSnapshot, 0,0);
+  const width = x - startX;
+  const height = y- startY;
+  ctx.strokeRect(startX, startY, width, height);
+
+}
+};
+const handleMouseUp = () => {
+  setIsDrawing(false);
+};
+
+
 
   return (
     <div>
+      {/* Toolbar */}
+
       <div style={{
         padding: '10px',
         backgroundColor: '#f0f0f0',
         borderBottom: '1px solid #ccc',
         display: 'flex',
         gap: '10px',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexWrap: 'wrap'
       }}>
+        {/* Tool Button */}
+        <div style = {{ display: 'flex', gap: '5px'}}>
+          <button
+          onClick={() => setCurrentTool('pen')}
+          style={{
+            padding: '8px 12px',
+              backgroundColor: currentTool === 'pen' ? '#007bff' : '#ddd',
+              color: currentTool === 'pen' ? 'white' : 'black',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            ✏️ Pen
+          </button>
+          <button
+            onClick={() => setCurrentTool('line')}
+            style={{
+              padding: '8px 12px',
+              backgroundColor: currentTool === 'line' ? '#007bff' : '#ddd',
+              color: currentTool === 'line' ? 'white' : 'black',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            📏 Line
+          </button>
+          <button
+            onClick={() => setCurrentTool('rectangle')}
+            style={{
+              padding: '8px 12px',
+              backgroundColor: currentTool === 'rectangle' ? '#007bff' : '#ddd',
+              color: currentTool === 'rectangle' ? 'white' : 'black',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            ▭ Rectangle
+          </button>
+        </div>
+
+        {/* Color Picker */}
         <label>
           Color:
           <input
@@ -64,8 +149,9 @@ export default function Canvas() {
             style={{ marginLeft: '5px', cursor: 'pointer' }}
           />
         </label>
-        <label>
+      
           Stroke Width:
+          <label>
           <input
             type="range"
             min="1"
@@ -76,7 +162,9 @@ export default function Canvas() {
           />
           <span style={{ marginLeft: '5px' }}>{currentStroke}px</span>
         </label>
-      </div>
+      </div> 
+
+      {/*canvas*/}
       <canvas
         ref={canvasRef}
         onMouseDown={handleMouseDown}
