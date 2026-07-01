@@ -29,7 +29,7 @@ export default function Canvas() {
     const y = e.clientY - rect.top;
 
     //save canvas snapshot for line/rectangle preview
-    if (currentTool === 'line' || currentTool === 'rectangle') {
+    if (currentTool === 'pen' || currentTool === 'eraser') {
       const ctx = canvas.getContext ('2d');
     setCanvasSnapshot(ctx.getImageData(0,0, canvas.width, canvas.height));
 }
@@ -53,9 +53,10 @@ export default function Canvas() {
     ctx.lineWidth = currentStroke;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
+    ctx.globalCompositeOperation = currentTool === 'eraser' ? 'destination-out' : 'source-over';
 
-if (currentTool === 'pen') {
-  ctx.lineTo (x,y);
+if (currentTool === 'pen' || currentTool === 'eraser') {
+    ctx.lineTo (x,y);
   ctx.stroke();
 }
 else if (currentTool === 'line') {
@@ -138,6 +139,21 @@ const handleMouseUp = () => {
             ▭ Rectangle
           </button>
         </div>
+
+        <button
+  onClick={() => setCurrentTool('eraser')}
+  style={{
+    padding: '8px 12px',
+    backgroundColor: currentTool === 'eraser' ? '#007bff' : '#ddd',
+    color: currentTool === 'eraser' ? 'white' : 'black',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  }}
+>
+  🧹 Eraser
+</button>
 
         {/* Color Picker */}
         <label>
