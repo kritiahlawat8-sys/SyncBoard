@@ -1,16 +1,105 @@
-# React + Vite
+# SyncBoard 🎨
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
 
-Currently, two official plugins are available:
+**SyncBoard** is a collaborative drawing canvas built with **React**, **Vite**, and the **HTML5 Canvas API**. It allows users to draw, create basic shapes, erase drawings, and manage their work using Undo and Redo functionality.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Drawing Tools
 
-## Expanding the ESLint configuration
+* ✏️ Pen Tool
+* 📏 Line Tool (Live Preview)
+* ▭ Rectangle Tool (Live Preview)
+* 🧹 Eraser Tool
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Customization
+
+* 🎨 Color Picker
+* 📐 Adjustable Stroke Width (1–20px)
+
+### History Management
+
+* ↶ Undo
+* ↷ Redo
+* Drawing History Tracking
+* Smart Enable/Disable Buttons
+
+---
+
+## 🛠️ Tech Stack
+
+* React 18
+* Vite
+* HTML5 Canvas API
+* React Hooks
+* CSS
+* Git & GitHub
+
+---
+
+## 📂 Project Structure
+
+```text
+SyncBoard/
+├── src/
+│   ├── components/
+│   │   └── Canvas.jsx
+│   ├── App.jsx
+│   ├── App.css
+│   └── main.jsx
+├── public/
+├── package.json
+├── vite.config.js
+└── README.md
+```
+
+---
+
+## 🚀 Installation
+
+```bash
+git clone https://github.com/kritiahlawat8-sys/SyncBoard.git
+cd SyncBoard
+npm install
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## 📅 Development Progress
+
+* Project setup using React + Vite
+* Canvas initialization
+* Pen Tool
+* Line Tool
+* Rectangle Tool
+* Color Picker
+* Stroke Width Control
+* Eraser Tool
+* Responsive canvas layout
+* Undo functionality
+* Redo functionality
+* Drawing history management
+* Smart Undo/Redo button states
+
+---
+
+## 👩‍💻 Author
+
+**Kriti Ahlawat**
+B.Tech IT Student
+
+**Submitted to: Mr Sourav Singh** 
+
+---
+
+**Last Updated:** July 1, 2026

@@ -8,18 +8,28 @@ export default function Canvas() {
   const [startX, setStartX] = useState (0);
   const [startY, setStartY] = useState(0);
   const [canvasSnapshot, setCanvasSnapshot] = useState(null);
-  const [currentTool, setCurrentTool] = useState('pen')
+  const [currentTool, setCurrentTool] = useState('pen');
+  const [history, setHistory] = useState([]);
+const [historyStep, setHistoryStep] = useState(0);
   
 
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight - 100;
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }, []);
+  const canvas = canvasRef.current;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight - 100;
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  document.body.style.margin = '0';
+  document.body.style.padding = '0';
+
+  // Initial blank canvas ko history mein save karo
+  const initialSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  setHistory([initialSnapshot]);
+  setHistoryStep(0);
+}, []);
 
   const handleMouseDown = (e) => {
     setIsDrawing(true);
@@ -27,10 +37,12 @@ export default function Canvas() {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    const ctx = canvas.getContext('2d'); 
+
+    ctx.globalCompositeOperation = 'source-over';
 
     //save canvas snapshot for line/rectangle preview
-    if (currentTool === 'pen' || currentTool === 'eraser') {
-      const ctx = canvas.getContext ('2d');
+    if (currentTool === 'line' || currentTool === 'rectangle') { 
     setCanvasSnapshot(ctx.getImageData(0,0, canvas.width, canvas.height));
 }
     setStartX(x);
@@ -77,6 +89,40 @@ ctx.stroke();
 };
 const handleMouseUp = () => {
   setIsDrawing(false);
+
+  // Current canvas state ko history mein add karo
+  const canvas = canvasRef.current;
+  const ctx = canvas.getContext('2d');
+  const snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  
+  // Agar pehle undo kia tha, toh future steps delete ho jaate hain
+  const newHistory = history.slice(0, historyStep + 1);
+  newHistory.push(snapshot);
+  
+  setHistory(newHistory);
+  setHistoryStep(newHistory.length - 1);
+}; 
+
+const handleUndo = () => {
+  if (historyStep > 0) {
+    const newStep = historyStep - 1;
+    setHistoryStep(newStep);
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctx.putImageData(history[newStep], 0, 0);
+  }
+};
+
+const handleRedo = () => {
+  if (historyStep < history.length - 1) {
+    const newStep = historyStep + 1;
+    setHistoryStep(newStep);
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctx.putImageData(history[newStep], 0, 0);
+  }
 };
 
 
@@ -154,6 +200,41 @@ const handleMouseUp = () => {
 >
   🧹 Eraser
 </button>
+
+
+{/* Undo/Redo Buttons */}
+<div style={{ display: 'flex', gap: '5px' }}>
+  <button
+    onClick={handleUndo}
+    disabled={historyStep === 0}
+    style={{
+      padding: '8px 12px',
+      backgroundColor: historyStep === 0 ? '#ccc' : '#6c757d',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: historyStep === 0 ? 'not-allowed' : 'pointer',
+      fontWeight: 'bold'
+    }}
+  >
+    ↶ Undo
+  </button>
+  <button
+    onClick={handleRedo}
+    disabled={historyStep === history.length - 1}
+    style={{
+      padding: '8px 12px',
+      backgroundColor: historyStep === history.length - 1 ? '#ccc' : '#6c757d',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: historyStep === history.length - 1 ? 'not-allowed' : 'pointer',
+      fontWeight: 'bold'
+    }}
+  >
+    ↷ Redo
+  </button>
+</div>
 
         {/* Color Picker */}
         <label>
