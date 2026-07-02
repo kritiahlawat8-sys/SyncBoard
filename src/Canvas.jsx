@@ -1,3 +1,4 @@
+import socket from './socket';
 import { useEffect, useRef, useState } from 'react';
 
 export default function Canvas() {
@@ -12,7 +13,14 @@ export default function Canvas() {
   const [history, setHistory] = useState([]);
 const [historyStep, setHistoryStep] = useState(0);
   
-
+useEffect(() => {
+  socket.on('connect', () => {
+    console.log('connected to server:', socket.id);
+  });
+  return () => {
+    socket.off('connect');
+  };
+}, []);
 
   useEffect(() => {
   const canvas = canvasRef.current;

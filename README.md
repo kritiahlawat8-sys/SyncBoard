@@ -37,12 +37,15 @@
 * React Hooks
 * CSS
 * Git & GitHub
+* Node.js
+* Express
+* Socket.io
 
 ---
 
 ## 📂 Project Structure
 
-```text
+```
 SyncBoard/
 ├── src/
 │   ├── components/
@@ -50,12 +53,15 @@ SyncBoard/
 │   ├── App.jsx
 │   ├── App.css
 │   └── main.jsx
+├── server/
+│   ├── server.js
+│   └── package.json
 ├── public/
 ├── package.json
 ├── vite.config.js
 └── README.md
-```
 
+```
 ---
 
 ## 🚀 Installation
@@ -90,6 +96,11 @@ http://localhost:5173
 * Redo functionality
 * Drawing history management
 * Smart Undo/Redo button states
+* Node.js + Express backend server setup
+* Socket.io integration for real-time communication
+* CORS configuration for frontend-backend connection
+* Socket connection/disconnection event handling
+* Frontend connected to backend via socket.io-client
 
 ---
 
@@ -102,4 +113,4 @@ B.Tech IT Student
 
 ---
 
-**Last Updated:** July 1, 2026
+**Last Updated:** July 2, 2026
